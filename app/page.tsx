@@ -13,6 +13,7 @@ export default function Home() {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [myId, setMyId] = useState("");
 
   useEffect(() => {
     // --- 1. 初回データ読み込み ---
@@ -63,24 +64,46 @@ export default function Home() {
     });
   };
 
+  useEffect(() => {
+    let id = localStorage.getItem("my_chat_id");
+    if (!id) {
+      id = Math.random().toString(36).substring(7);
+      localStorage.setItem("my_chat_id", id);
+    }
+    setMyId(id);
+    console.log("私のID：", id);
+  }, []);
+
   const sendMessage = async () => {
     if (!input.trim()) return;
-    const { error } = await supabase.from("messages").insert([{ content: input }]);
+
+    const { error } = await supabase.from("messages").insert([{ content: input, user_id: myId }]);
     if (error) console.error("送信エラー:", error);
     else setInput("");
   };
 
   return (
-    <main className="max-w-md mx-auto p-4 h-screen flex flex-col text-black">
-      <h1 className="text-xl font-bold mb-4">Message</h1>
-
+    <main className="max-w-md mx-auto flex flex-col text-[#333] justify-center">
       {/* メッセージ表示エリア */}
-      <div className="flex-1 overflow-y-auto space-y-2 border p-4 mb-2 rounded bg-white">
-        {messages.map((m, i) => (
-          <div key={i} className="p-3 bg-gray-100 rounded shadow-sm">
-            <p className="whitespace-pre-wrap">{m.content}</p>
-          </div>
-        ))}
+      <div className="flex-none overflow-y-auto space-y-3 border max-h-[80vh] p-5 mb-6 rounded-lg bg-linear-to-br from-[#FFE0AF] to-[#FFC8A1]">
+        {messages.map((m, i) => {
+          const isMine = m.user_id === myId; // 自分のメッセージか判定
+
+          return (
+            <div key={i} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
+                  isMine
+                    ? "bg-amber-400 text-white rounded-br-none" // 自分の：右下を角張らせる
+                    : "bg-white text-black rounded-bl-none" // 他人の：左下を角張らせる
+                }`}
+              >
+                <p className="whitespace-pre-wrap text-sm">{m.content}</p>
+              </div>
+            </div>
+          );
+        })}
+
         {/* 入力中表示をリストの最下部に配置 */}
         <div className="h-6">
           {isTyping && (
@@ -105,15 +128,15 @@ export default function Home() {
                 sendMessage();
               }
             }}
-            className="flex-1 border p-3 rounded focus:ring-2 focus:ring-amber-400 outline-none"
+            className="flex-1 border rounded-full py-4 px-6 bg-white focus:ring-2 focus:ring-amber-400 outline-none"
             placeholder="メッセージを入力..."
-            rows={2}
+            rows={1}
           />
           <button
             onClick={sendMessage}
-            className="bg-amber-400 text-white px-4 py-2 rounded font-bold hover:bg-amber-500 transition-colors"
+            className="px-4 py-2 rounded-full font-bold bg-amber-400 text-white"
           >
-            送信
+            submit
           </button>
         </div>
       </div>
