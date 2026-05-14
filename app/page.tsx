@@ -83,38 +83,39 @@ export default function Home() {
   };
 
   return (
-    <main className="max-w-md mx-auto flex flex-col text-[#333] justify-center">
-      {/* メッセージ表示エリア */}
-      <div className="flex-none overflow-y-auto space-y-3 border max-h-[80vh] p-5 mb-6 rounded-lg bg-linear-to-br from-[#FFE0AF] to-[#FFC8A1]">
-        {messages.map((m, i) => {
-          const isMine = m.user_id === myId; // 自分のメッセージか判定
+    <main className="w-full max-w-md mx-auto">
+      <div className="mx-auto flex flex-col justify-center h-screen">
+        {/* メッセージ表示エリア */}
+        <div className="flex-none max-w-[90%] mx-auto max-h-[70dvh] overflow-y-auto space-y-3 border p-5 mb-6 rounded-lg">
+          {messages.map((m, i) => {
+            const isMine = m.user_id === myId; // 自分のメッセージか判定
 
-          return (
-            <div key={i} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
-                  isMine
-                    ? "bg-amber-400 text-white rounded-br-none" // 自分の：右下を角張らせる
-                    : "bg-white text-black rounded-bl-none" // 他人の：左下を角張らせる
-                }`}
-              >
-                <p className="whitespace-pre-wrap text-sm">{m.content}</p>
+            return (
+              <div key={i} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
+                    isMine
+                      ? "bg-amber-400 text-white rounded-br-none" // 自分の：右下を角張らせる
+                      : "bg-white text-black rounded-bl-none" // 他人の：左下を角張らせる
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap text-sm">{m.content}</p>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
 
-        {/* 入力中表示をリストの最下部に配置 */}
-        <div className="h-6">
-          {isTyping && (
-            <p className="text-xs text-gray-400 italic animate-pulse">誰かが入力中...</p>
-          )}
+          {/* 入力中表示をリストの最下部に配置 */}
+          <div className="h-6">
+            {isTyping && (
+              <p className="text-xs text-gray-400 italic animate-pulse">誰かが入力中...</p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* 入力フォームエリア */}
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
+        {/* 入力フォームエリア */}
+
+        <div className="flex flex-row gap-3 max-w-[90%] mx-auto">
           <textarea
             value={input}
             onChange={(e) => {
@@ -128,7 +129,7 @@ export default function Home() {
                 sendMessage();
               }
             }}
-            className="flex-1 border rounded-full py-4 px-6 bg-white focus:ring-2 focus:ring-amber-400 outline-none"
+            className="border rounded-full py-4 px-6 w-full bg-white focus:ring-2 focus:ring-amber-400 outline-none"
             placeholder="メッセージを入力..."
             rows={1}
           />
